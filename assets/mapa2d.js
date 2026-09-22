@@ -187,6 +187,8 @@
       });
     }
 
+    window._selecionarMapa = selecionar;
+
     // lista -> mapa: cabecalho do acordeao (ou a linha inteira, na sede,
     // que nao tem acordeao) tambem seleciona o grupo no mapa
     itens.forEach(function (el) {

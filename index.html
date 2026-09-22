@@ -506,29 +506,60 @@ footer{margin:0 .75rem;border-radius:1.6rem 1.6rem 0 0;background:#2E7370;}
 
 .parceiros-marquee-viewport{
   overflow:hidden;
+  position:relative;
+  width:100%;
   -webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);
 }
-.parceiros-marquee-track{display:flex;width:max-content;animation:parceiros-marquee-scroll 40s linear infinite;will-change:transform;}
-.parceiros-marquee-group{display:flex;align-items:center;flex-shrink:0;gap:60px;padding:0 30px;}
-.parceiros-marquee-item{flex:0 0 auto;display:flex;align-items:center;}
-.parceiros-marquee-item img{
-  height:46px;width:auto;display:block;
-  opacity:.68;transition:opacity 220ms ease-out,transform 220ms ease-out;
+.parceiros-marquee-track{
+  display:flex !important;
+  width:max-content !important;
+  -webkit-animation:parceiros-marquee-scroll 32s linear infinite !important;
+  animation:parceiros-marquee-scroll 32s linear infinite !important;
+  will-change:transform;
 }
-.parceiros-marquee-viewport:hover .parceiros-marquee-track{animation-play-state:paused;}
-/* qualquer hover dentro do viewport apaga todo mundo; o :hover do proprio
-   item (mais especifico, casa depois na cascata) reacende so ele */
-.parceiros-marquee-viewport:hover .parceiros-marquee-item img{opacity:.28;}
-.parceiros-marquee-item:hover img{opacity:1;transform:scale(1.18);}
-@keyframes parceiros-marquee-scroll{from{transform:translateX(0);}to{transform:translateX(-33.3334%);}}
+.parceiros-marquee-group{
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  gap:60px;
+  padding:0 30px;
+}
+.parceiros-marquee-item{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+}
+.parceiros-marquee-item img{
+  height:46px;
+  width:auto;
+  display:block;
+  opacity:.72;
+  transition:opacity 220ms ease-out,transform 220ms ease-out;
+}
+.parceiros-marquee-track:hover{
+  animation-play-state:paused;
+  -webkit-animation-play-state:paused;
+}
+.parceiros-marquee-track:hover .parceiros-marquee-item img{
+  opacity:.35;
+}
+.parceiros-marquee-item:hover img{
+  opacity:1 !important;
+  transform:scale(1.18);
+}
+@-webkit-keyframes parceiros-marquee-scroll{
+  from{ -webkit-transform:translate3d(0,0,0); transform:translate3d(0,0,0); }
+  to{ -webkit-transform:translate3d(-33.333333%,0,0); transform:translate3d(-33.333333%,0,0); }
+}
+@keyframes parceiros-marquee-scroll{
+  from{ -webkit-transform:translate3d(0,0,0); transform:translate3d(0,0,0); }
+  to{ -webkit-transform:translate3d(-33.333333%,0,0); transform:translate3d(-33.333333%,0,0); }
+}
 
 @media(max-width:560px){
   .parceiros-marquee-item img{height:34px;}
   .parceiros-marquee-group{gap:36px;padding:0 18px;}
-}
-@media(prefers-reduced-motion:reduce){
-  .parceiros-marquee-track{animation:none;}
 }
 
 /* ══════════ HERO CARE SYSTEMS (bloco isolado, prefixo .cs-) ══════════ */
@@ -1214,6 +1245,7 @@ svg.cs-pin-icon{
 .cs-pin--sede .cs-pin-fill{fill:var(--green-lt);}
 .cs-pin.is-ativo .cs-pin-fill{fill:var(--orange-500);}
 .cs-pin-hole{fill:var(--green-hero);}
+.cs-pin--sede .cs-pin-hole{fill:#FFD700;}
 
 /* eco na ponta: o mesmo pulso de antes, so que agora no pe do balao,
    onde a coordenada real esta */
@@ -1290,6 +1322,147 @@ svg.cs-pin-icon{
 .distrib-dados dd{margin:0;color:rgba(255,255,255,.82);line-height:1.55;}
 .distrib-dados a{color:var(--lime-400);text-decoration:none;}
 .distrib-dados a:hover,.distrib-dados a:focus-visible{text-decoration:underline;}
+
+/* ── Lista de Distribuidores: Cidades como itens principais e clientes ocultos ── */
+.distrib-list{display:flex;flex-direction:column;gap:10px;}
+
+.distrib-cidade-item{
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  overflow:hidden;
+  transition:border-color 200ms ease-out,box-shadow 200ms ease-out,background 200ms ease-out;
+}
+.distrib-cidade-item:hover{
+  background:rgba(255,255,255,.10);
+  border-color:var(--lime-400);
+  box-shadow:0 0 0 1px rgba(124,194,92,.35),0 0 24px rgba(124,194,92,.22);
+}
+.distrib-cidade-item.aberto{
+  background:rgba(255,255,255,.08);
+  border-color:var(--lime-400);
+  box-shadow:0 0 0 1px rgba(124,194,92,.25),0 0 20px rgba(124,194,92,.15);
+}
+.distrib-cidade-item:has(.distrib-item.is-selecionado),
+.distrib-cidade-item.is-ativo-mapa{
+  background:rgba(234,102,33,.08);
+  border-color:var(--orange-500);
+  box-shadow:0 0 0 1px rgba(234,102,33,.35),0 0 24px rgba(234,102,33,.22);
+}
+
+.distrib-cidade-head{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 18px;
+  background:none;
+  border:0;
+  text-align:left;
+  color:inherit;
+  font:inherit;
+  cursor:pointer;
+}
+.distrib-cidade-head .distrib-nome{
+  font-size:var(--fs-body-sm);
+  font-weight:700;
+  color:var(--white);
+  display:block;
+}
+.distrib-cidade-head .distrib-sub{
+  font-size:var(--fs-caption);
+  color:rgba(255,255,255,.62);
+  margin-top:2px;
+  display:block;
+}
+.distrib-cidade-item.aberto > .distrib-cidade-head .distrib-chev{
+  transform:rotate(180deg);
+  color:var(--lime-400);
+}
+
+/* Menu de clientes que abre dentro da cidade */
+.distrib-cidade-body{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows 260ms ease-out;
+}
+.distrib-cidade-body > div{
+  overflow:hidden;
+}
+.distrib-cidade-item.aberto > .distrib-cidade-body{
+  grid-template-rows:1fr;
+}
+
+.distrib-clientes-lista{
+  margin:0 14px 14px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.10);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.distrib-clientes-label{
+  font-size:10.5px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:rgba(255,255,255,.50);
+  margin-bottom:2px;
+  padding:0 2px;
+}
+
+/* Cartão do cliente dentro do menu da cidade */
+.distrib-clientes-lista .distrib-item{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+}
+.distrib-clientes-lista .distrib-item:hover{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(168,209,86,.45);
+  box-shadow:none;
+}
+.distrib-clientes-lista .distrib-item.aberto{
+  background:rgba(255,255,255,.08);
+  border-color:var(--lime-400);
+}
+.distrib-cliente-head{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  background:none;
+  border:0;
+  text-align:left;
+  color:inherit;
+  font:inherit;
+  cursor:pointer;
+}
+.distrib-cliente-head .distrib-nome{
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--white);
+  display:block;
+}
+.distrib-cliente-head .distrib-cidade{
+  font-size:11.5px;
+  color:rgba(255,255,255,.60);
+  display:block;
+}
+.distrib-cliente-badge-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--lime-400);
+  flex-shrink:0;
+}
+.distrib-clientes-lista .distrib-dados{
+  margin:0 14px 14px;
+  padding-top:10px;
+}
 
 @media(prefers-reduced-motion:reduce){
   .distrib-det,.distrib-chev{transition:none;}
@@ -1869,8 +2042,11 @@ svg.cs-pin-icon{
         <div class="parceiros-marquee-item"><img src="assets/parceiros/izzi-sabor-e-pronto.png" alt="Izzi Sabor e Pronto" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/laska-amenites.png" alt="Laska Amenities" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/pizza-e-pizza.png" alt="Pizza & Pizza Pizzaria e Hamburgueria" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/robertos.png" alt="Roberto's" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/sergipe.png" alt="TrulyNolen Sergipe – Controle de Pragas e Sanitização" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/supermercados-bomdia.png" alt="Supermercados Bom Dia" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/tikck-titos.png" alt="Tick Titos" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/x-prime.png" alt="X-Prime Academia" loading="lazy" width="947" height="466"></div>
       </div>
       <div class="parceiros-marquee-group" aria-hidden="true">
         <div class="parceiros-marquee-item"><img src="assets/parceiros/apetiti.png" alt="Apetit Serviços de Alimentação" loading="lazy" width="947" height="466"></div>
@@ -1883,8 +2059,11 @@ svg.cs-pin-icon{
         <div class="parceiros-marquee-item"><img src="assets/parceiros/izzi-sabor-e-pronto.png" alt="Izzi Sabor e Pronto" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/laska-amenites.png" alt="Laska Amenities" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/pizza-e-pizza.png" alt="Pizza & Pizza Pizzaria e Hamburgueria" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/robertos.png" alt="Roberto's" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/sergipe.png" alt="TrulyNolen Sergipe – Controle de Pragas e Sanitização" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/supermercados-bomdia.png" alt="Supermercados Bom Dia" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/tikck-titos.png" alt="Tick Titos" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/x-prime.png" alt="X-Prime Academia" loading="lazy" width="947" height="466"></div>
       </div>
       <div class="parceiros-marquee-group" aria-hidden="true">
         <div class="parceiros-marquee-item"><img src="assets/parceiros/apetiti.png" alt="Apetit Serviços de Alimentação" loading="lazy" width="947" height="466"></div>
@@ -1897,8 +2076,11 @@ svg.cs-pin-icon{
         <div class="parceiros-marquee-item"><img src="assets/parceiros/izzi-sabor-e-pronto.png" alt="Izzi Sabor e Pronto" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/laska-amenites.png" alt="Laska Amenities" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/pizza-e-pizza.png" alt="Pizza & Pizza Pizzaria e Hamburgueria" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/robertos.png" alt="Roberto's" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/sergipe.png" alt="TrulyNolen Sergipe – Controle de Pragas e Sanitização" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/supermercados-bomdia.png" alt="Supermercados Bom Dia" loading="lazy" width="947" height="466"></div>
         <div class="parceiros-marquee-item"><img src="assets/parceiros/tikck-titos.png" alt="Tick Titos" loading="lazy" width="947" height="466"></div>
+        <div class="parceiros-marquee-item"><img src="assets/parceiros/x-prime.png" alt="X-Prime Academia" loading="lazy" width="947" height="466"></div>
       </div>
     </div>
   </div>
@@ -1914,9 +2096,11 @@ svg.cs-pin-icon{
     <div class="distrib-layout">
       <div>
         <div class="distrib-list">
-          <!-- fonte unica dos distribuidores: o markup carrega os dados e o mapa 3D
-               le daqui. lat/lon alimentam a projecao; dx/dy so existem onde duas
-               unidades quase coincidem em tela (as duas de Londrina, ~1 km) -->
+          <!-- fonte unica dos distribuidores: o markup carrega os dados e o mapa 2D
+               le daqui. A sede fica como antes no topo; as cidades sao os itens principais
+               com os clientes ocultos; ao clicar na cidade abre o menu para selecionar o cliente -->
+
+          <!-- SEDE CARE SYSTEMS (como era antes) -->
           <div class="distrib-item sede" data-id="sede" data-uf="SP" data-sede="1" data-grupo="sede"
                data-lat="-21.9686" data-lon="-46.7986" data-rotulo="Sede Care Systems" data-desvio="6" tabindex="0">
             <div class="distrib-dot laranja"></div>
@@ -1925,159 +2109,261 @@ svg.cs-pin-icon{
               <div class="distrib-cidade">São João da Boa Vista, SP</div>
             </div>
           </div>
-          <div class="distrib-item" data-id="ice-apucarana" data-uf="PR" data-grupo="apucarana"
-               data-lat="-23.5505" data-lon="-51.4608" data-dx="-1.5" data-dy="-1" data-rotulo="Apucarana" data-desvio="34">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-ice-apucarana">
+
+          <!-- CIDADE: Apucarana, PR -->
+          <div class="distrib-cidade-item" data-cidade-grupo="apucarana">
+            <button class="distrib-cidade-head" type="button" aria-expanded="false" aria-controls="cid-apucarana">
               <span class="distrib-dot verde"></span>
               <span class="distrib-info">
-                <span class="distrib-nome">Dental ICE</span>
-                <span class="distrib-cidade">Apucarana, PR</span>
+                <span class="distrib-nome">Apucarana, PR</span>
+                <span class="distrib-sub">1 distribuidor parceiro</span>
               </span>
               <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
             </button>
-            <div class="distrib-det" id="det-ice-apucarana"><div>
-              <dl class="distrib-dados">
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">Rua Dr. Nagib Daher, 1084 &ndash; Centro<br>Apucarana, PR &middot; CEP 86800-000</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543996080462">(43) 99608-0462</a></dd>
-                <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 18h</dd>
-                <dt>Instagram</dt><dd><a href="https://www.instagram.com/dentaliceapucarana/" target="_blank" rel="noopener">@dentaliceapucarana</a></dd>
-              </dl>
+            <div class="distrib-cidade-body" id="cid-apucarana"><div>
+              <div class="distrib-clientes-lista">
+                <div class="distrib-clientes-label">Selecione o distribuidor:</div>
+                <div class="distrib-item" data-id="ice-apucarana" data-uf="PR" data-grupo="apucarana"
+                     data-lat="-23.5505" data-lon="-51.4608" data-dx="-1.5" data-dy="-1" data-rotulo="Apucarana" data-desvio="34">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-ice-apucarana">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental ICE</span>
+                      <span class="distrib-cidade">Apucarana, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-ice-apucarana"><div>
+                    <dl class="distrib-dados">
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">Rua Dr. Nagib Daher, 1084 &ndash; Centro<br>Apucarana, PR &middot; CEP 86800-000</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543996080462">(43) 99608-0462</a></dd>
+                      <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 18h</dd>
+                      <dt>Instagram</dt><dd><a href="https://www.instagram.com/dentaliceapucarana/" target="_blank" rel="noopener">@dentaliceapucarana</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+              </div>
             </div></div>
           </div>
-          <div class="distrib-item" data-id="classea-londrina" data-uf="PR" data-grupo="londrina"
-               data-lat="-23.3175" data-lon="-51.1580" data-dx="3" data-rotulo="Classe A" data-desvio="4">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-classea-londrina">
+
+          <!-- CIDADE: Arapongas, PR -->
+          <div class="distrib-cidade-item" data-cidade-grupo="arapongas">
+            <button class="distrib-cidade-head" type="button" aria-expanded="false" aria-controls="cid-arapongas">
               <span class="distrib-dot verde"></span>
               <span class="distrib-info">
-                <span class="distrib-nome">Dental Classe A</span>
-                <span class="distrib-cidade">Londrina, PR</span>
+                <span class="distrib-nome">Arapongas, PR</span>
+                <span class="distrib-sub">2 distribuidores parceiros</span>
               </span>
               <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
             </button>
-            <div class="distrib-det" id="det-classea-londrina"><div>
-              <dl class="distrib-dados">
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Goi&aacute;s, 1255 &ndash; Centro<br>Londrina, PR &middot; CEP 86020-410</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543991740116">(43) 99174-0116</a></dd>
-                <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 18h<br>S&aacute;bado, das 8h &agrave;s 12h</dd>
-                <dt>Instagram</dt><dd><a href="https://www.instagram.com/dentalclasse_a/" target="_blank" rel="noopener">@dentalclasse_a</a></dd>
-              </dl>
+            <div class="distrib-cidade-body" id="cid-arapongas"><div>
+              <div class="distrib-clientes-lista">
+                <div class="distrib-clientes-label">Selecione o distribuidor:</div>
+                <div class="distrib-item" data-id="inga-arapongas" data-uf="PR" data-grupo="arapongas"
+                     data-lat="-23.4055" data-lon="-51.4327" data-dx="3.7" data-dy="-9.9" data-rotulo="Arapongas &middot; Ing&aacute;" data-desvio="8">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-inga-arapongas">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental Ing&aacute;</span>
+                      <span class="distrib-cidade">Arapongas, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-inga-arapongas"><div>
+                    <dl class="distrib-dados">
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Pinta Roxa, 73 &ndash; Vila Cascata<br>Arapongas, PR &middot; CEP 86701-460</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543996894289">(43) 99689-4289</a></dd>
+                      <dt>Horário</dt><dd>08h &agrave;s 18h</dd>
+                      <dt>Instagram</dt><dd><a href="https://www.instagram.com/dentalinga/" target="_blank" rel="noopener">@dentalinga</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+                <div class="distrib-item" data-id="panacci-arapongas" data-uf="PR" data-grupo="arapongas"
+                     data-lat="-23.4057" data-lon="-51.4360" data-dx="-9" data-dy="-26" data-rotulo="Arapongas &middot; Panacci" data-desvio="0">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-panacci-arapongas">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental Panacci</span>
+                      <span class="distrib-cidade">Arapongas, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-panacci-arapongas"><div>
+                    <dl class="distrib-dados">
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Gar&ccedil;as, 1593 &ndash; T&eacute;rreo m&oacute;dulo 2 &ndash; Jardim Eldorado<br>Arapongas, PR &middot; CEP 86708-190</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543999099877">(43) 99909-9877</a></dd>
+                      <dt>Horário</dt><dd>08h &agrave;s 18h</dd>
+                      <dt>Instagram</dt><dd><a href="https://www.instagram.com/panacci_prod.odontologicos/" target="_blank" rel="noopener">@panacci_prod.odontologicos</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+              </div>
             </div></div>
           </div>
-          <div class="distrib-item" data-id="odonthomaz-londrina" data-uf="PR" data-grupo="londrina"
-               data-lat="-23.3103" data-lon="-51.1628" data-dx="-1.6" data-dy="2" data-rotulo="Odonthomaz" data-desvio="16">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-odonthomaz-londrina">
+
+          <!-- CIDADE: Guarapuava, PR -->
+          <div class="distrib-cidade-item" data-cidade-grupo="guarapuava">
+            <button class="distrib-cidade-head" type="button" aria-expanded="false" aria-controls="cid-guarapuava">
               <span class="distrib-dot verde"></span>
               <span class="distrib-info">
-                <span class="distrib-nome">Dental Odonthomaz</span>
-                <span class="distrib-cidade">Londrina, PR</span>
+                <span class="distrib-nome">Guarapuava, PR</span>
+                <span class="distrib-sub">1 distribuidor parceiro</span>
               </span>
               <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
             </button>
-            <div class="distrib-det" id="det-odonthomaz-londrina"><div>
-              <dl class="distrib-dados">
-                <dt>Unidade</dt><dd>Sede matriz</dd>
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Camb&aacute;r&aacute;, 340 &ndash; Centro<br>Londrina, PR &middot; CEP 86010-530</dd>
-                <dt>WhatsApp</dt><dd class="dd-tel"><a href="tel:+554398750339">(43) 9 9875-0339</a></dd>
-                <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 12h e das 14h &agrave;s 18h</dd>
-                <dt>Site</dt><dd><a href="https://www.dentalodonthomaz.com.br" target="_blank" rel="noopener">dentalodonthomaz.com.br</a></dd>
-              </dl>
+            <div class="distrib-cidade-body" id="cid-guarapuava"><div>
+              <div class="distrib-clientes-lista">
+                <div class="distrib-clientes-label">Selecione o distribuidor:</div>
+                <div class="distrib-item" data-id="odonthomaz-guarapuava" data-uf="PR" data-grupo="guarapuava"
+                     data-lat="-25.3935" data-lon="-51.4562" data-rotulo="Guarapuava">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-odonthomaz-guarapuava">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental Odonthomaz</span>
+                      <span class="distrib-cidade">Guarapuava, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-odonthomaz-guarapuava"><div>
+                    <dl class="distrib-dados">
+                      <dt>Unidade</dt><dd>Filial Centro-Oeste Paranaense</dd>
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Vicente Machado, 1877 &ndash; Centro<br>Guarapuava, PR &middot; CEP 85010-260</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+554236276051">(42) 3627-6051</a></dd>
+                      <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 12h e das 14h &agrave;s 18h</dd>
+                      <dt>Site</dt><dd><a href="https://www.dentalodonthomaz.com.br" target="_blank" rel="noopener">dentalodonthomaz.com.br</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+              </div>
             </div></div>
           </div>
-          <div class="distrib-item" data-id="odonthomaz-guarapuava" data-uf="PR" data-grupo="guarapuava"
-               data-lat="-25.3935" data-lon="-51.4562" data-rotulo="Guarapuava">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-odonthomaz-guarapuava">
+
+          <!-- CIDADE: Londrina, PR -->
+          <div class="distrib-cidade-item" data-cidade-grupo="londrina">
+            <button class="distrib-cidade-head" type="button" aria-expanded="false" aria-controls="cid-londrina">
               <span class="distrib-dot verde"></span>
               <span class="distrib-info">
-                <span class="distrib-nome">Dental Odonthomaz</span>
-                <span class="distrib-cidade">Guarapuava, PR</span>
+                <span class="distrib-nome">Londrina, PR</span>
+                <span class="distrib-sub">2 distribuidores parceiros</span>
               </span>
               <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
             </button>
-            <div class="distrib-det" id="det-odonthomaz-guarapuava"><div>
-              <dl class="distrib-dados">
-                <dt>Unidade</dt><dd>Filial Centro-Oeste Paranaense</dd>
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Vicente Machado, 1877 &ndash; Centro<br>Guarapuava, PR &middot; CEP 85010-260</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+554236276051">(42) 3627-6051</a></dd>
-                <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 12h e das 14h &agrave;s 18h</dd>
-                <dt>Site</dt><dd><a href="https://www.dentalodonthomaz.com.br" target="_blank" rel="noopener">dentalodonthomaz.com.br</a></dd>
-              </dl>
+            <div class="distrib-cidade-body" id="cid-londrina"><div>
+              <div class="distrib-clientes-lista">
+                <div class="distrib-clientes-label">Selecione o distribuidor:</div>
+                <div class="distrib-item" data-id="classea-londrina" data-uf="PR" data-grupo="londrina"
+                     data-lat="-23.3175" data-lon="-51.1580" data-dx="3" data-rotulo="Classe A" data-desvio="4">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-classea-londrina">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental Classe A</span>
+                      <span class="distrib-cidade">Londrina, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-classea-londrina"><div>
+                    <dl class="distrib-dados">
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Goi&aacute;s, 1255 &ndash; Centro<br>Londrina, PR &middot; CEP 86020-410</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543991740116">(43) 99174-0116</a></dd>
+                      <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 18h<br>S&aacute;bado, das 8h &agrave;s 12h</dd>
+                      <dt>Instagram</dt><dd><a href="https://www.instagram.com/dentalclasse_a/" target="_blank" rel="noopener">@dentalclasse_a</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+                <div class="distrib-item" data-id="odonthomaz-londrina" data-uf="PR" data-grupo="londrina"
+                     data-lat="-23.3103" data-lon="-51.1628" data-dx="-1.6" data-dy="2" data-rotulo="Odonthomaz" data-desvio="16">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-odonthomaz-londrina">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental Odonthomaz</span>
+                      <span class="distrib-cidade">Londrina, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-odonthomaz-londrina"><div>
+                    <dl class="distrib-dados">
+                      <dt>Unidade</dt><dd>Sede matriz</dd>
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Camb&aacute;r&aacute;, 340 &ndash; Centro<br>Londrina, PR &middot; CEP 86010-530</dd>
+                      <dt>WhatsApp</dt><dd class="dd-tel"><a href="tel:+554398750339">(43) 9 9875-0339</a></dd>
+                      <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 12h e das 14h &agrave;s 18h</dd>
+                      <dt>Site</dt><dd><a href="https://www.dentalodonthomaz.com.br" target="_blank" rel="noopener">dentalodonthomaz.com.br</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+              </div>
             </div></div>
           </div>
-          <div class="distrib-item" data-id="odonthomaz-prudente" data-uf="SP" data-grupo="prudente"
-               data-lat="-22.1256" data-lon="-51.3889" data-rotulo="Pres. Prudente" data-desvio="20">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-odonthomaz-prudente">
+
+          <!-- CIDADE: Maringá, PR -->
+          <div class="distrib-cidade-item" data-cidade-grupo="maringa">
+            <button class="distrib-cidade-head" type="button" aria-expanded="false" aria-controls="cid-maringa">
               <span class="distrib-dot verde"></span>
               <span class="distrib-info">
-                <span class="distrib-nome">Dental Odonthomaz</span>
-                <span class="distrib-cidade">Presidente Prudente, SP</span>
+                <span class="distrib-nome">Maringá, PR</span>
+                <span class="distrib-sub">1 distribuidor parceiro</span>
               </span>
               <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
             </button>
-            <div class="distrib-det" id="det-odonthomaz-prudente"><div>
-              <dl class="distrib-dados">
-                <dt>Unidade</dt><dd>Filial S&atilde;o Paulo</dd>
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Major Fel&iacute;cio Tarabay, 834 &ndash; Loja 01 &ndash; Centro<br>Presidente Prudente, SP &middot; CEP 19010-051</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+551832173172">(18) 3217-3172</a></dd>
-                <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 12h e das 14h &agrave;s 18h</dd>
-                <dt>Site</dt><dd><a href="https://www.dentalodonthomaz.com.br" target="_blank" rel="noopener">dentalodonthomaz.com.br</a></dd>
-              </dl>
+            <div class="distrib-cidade-body" id="cid-maringa"><div>
+              <div class="distrib-clientes-lista">
+                <div class="distrib-clientes-label">Selecione o distribuidor:</div>
+                <div class="distrib-item" data-id="dental-avila-maringa" data-uf="PR" data-grupo="maringa"
+                     data-lat="-23.3980" data-lon="-51.8970" data-rotulo="Maring&aacute;" data-desvio="0">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-dental-avila-maringa">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental &Aacute;vila</span>
+                      <span class="distrib-cidade">Maring&aacute;, PR</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-dental-avila-maringa"><div>
+                    <dl class="distrib-dados">
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">Av. Franklin Delano Roosevelt, 3610<br>Maring&aacute;, PR</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+554430235421">(44) 3023-5421</a> ou <a href="tel:+5544999128196">(44) 99912-8196</a></dd>
+                      <dt>E-mail</dt><dd><a href="mailto:terezinhaavila821@gmail.com">terezinhaavila821@gmail.com</a></dd>
+                      <dt>Instagram</dt><dd><a href="https://www.instagram.com/avila.dental/" target="_blank" rel="noopener">@avila.dental</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+              </div>
             </div></div>
           </div>
-          <div class="distrib-item" data-id="inga-arapongas" data-uf="PR" data-grupo="arapongas"
-               data-lat="-23.4055" data-lon="-51.4327" data-dx="3.7" data-dy="-9.9" data-rotulo="Arapongas &middot; Ing&aacute;" data-desvio="8">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-inga-arapongas">
+
+          <!-- CIDADE: Presidente Prudente, SP -->
+          <div class="distrib-cidade-item" data-cidade-grupo="prudente">
+            <button class="distrib-cidade-head" type="button" aria-expanded="false" aria-controls="cid-prudente">
               <span class="distrib-dot verde"></span>
               <span class="distrib-info">
-                <span class="distrib-nome">Dental Ing&aacute;</span>
-                <span class="distrib-cidade">Arapongas, PR</span>
+                <span class="distrib-nome">Presidente Prudente, SP</span>
+                <span class="distrib-sub">1 distribuidor parceiro</span>
               </span>
               <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
             </button>
-            <div class="distrib-det" id="det-inga-arapongas"><div>
-              <dl class="distrib-dados">
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Pinta Roxa, 73 &ndash; Vila Cascata<br>Arapongas, PR &middot; CEP 86701-460</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543996894289">(43) 99689-4289</a></dd>
-                <dt>Horário</dt><dd>08h &agrave;s 18h</dd>
-                <dt>Instagram</dt><dd><a href="https://www.instagram.com/dentalinga/" target="_blank" rel="noopener">@dentalinga</a></dd>
-              </dl>
-            </div></div>
-          </div>
-          <div class="distrib-item" data-id="panacci-arapongas" data-uf="PR" data-grupo="arapongas"
-               data-lat="-23.4057" data-lon="-51.4360" data-dx="-9" data-dy="-26" data-rotulo="Arapongas &middot; Panacci" data-desvio="0">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-panacci-arapongas">
-              <span class="distrib-dot verde"></span>
-              <span class="distrib-info">
-                <span class="distrib-nome">Dental Panacci</span>
-                <span class="distrib-cidade">Arapongas, PR</span>
-              </span>
-              <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
-            </button>
-            <div class="distrib-det" id="det-panacci-arapongas"><div>
-              <dl class="distrib-dados">
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Gar&ccedil;as, 1593 &ndash; T&eacute;rreo m&oacute;dulo 2 &ndash; Jardim Eldorado<br>Arapongas, PR &middot; CEP 86708-190</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+5543999099877">(43) 99909-9877</a></dd>
-                <dt>Horário</dt><dd>08h &agrave;s 18h</dd>
-                <dt>Instagram</dt><dd><a href="https://www.instagram.com/panacci_prod.odontologicos/" target="_blank" rel="noopener">@panacci_prod.odontologicos</a></dd>
-              </dl>
-            </div></div>
-          </div>
-          <div class="distrib-item" data-id="dental-avila-maringa" data-uf="PR" data-grupo="maringa"
-               data-lat="-23.3980" data-lon="-51.8970" data-rotulo="Maring&aacute;" data-desvio="0">
-            <button class="distrib-head" type="button" aria-expanded="false" aria-controls="det-dental-avila-maringa">
-              <span class="distrib-dot verde"></span>
-              <span class="distrib-info">
-                <span class="distrib-nome">Dental &Aacute;vila</span>
-                <span class="distrib-cidade">Maring&aacute;, PR</span>
-              </span>
-              <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
-            </button>
-            <div class="distrib-det" id="det-dental-avila-maringa"><div>
-              <dl class="distrib-dados">
-                <dt>Endere&ccedil;o</dt><dd class="dd-endereco">Av. Franklin Delano Roosevelt, 3610<br>Maring&aacute;, PR</dd>
-                <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+554430235421">(44) 3023-5421</a> ou <a href="tel:+5544999128196">(44) 99912-8196</a></dd>
-                <dt>E-mail</dt><dd><a href="mailto:terezinhaavila821@gmail.com">terezinhaavila821@gmail.com</a></dd>
-                <dt>Instagram</dt><dd><a href="https://www.instagram.com/avila.dental/" target="_blank" rel="noopener">@avila.dental</a></dd>
-              </dl>
+            <div class="distrib-cidade-body" id="cid-prudente"><div>
+              <div class="distrib-clientes-lista">
+                <div class="distrib-clientes-label">Selecione o distribuidor:</div>
+                <div class="distrib-item" data-id="odonthomaz-prudente" data-uf="SP" data-grupo="prudente"
+                     data-lat="-22.1256" data-lon="-51.3889" data-rotulo="Pres. Prudente" data-desvio="20">
+                  <button class="distrib-head distrib-cliente-head" type="button" aria-expanded="false" aria-controls="det-odonthomaz-prudente">
+                    <span class="distrib-cliente-badge-dot"></span>
+                    <span class="distrib-info">
+                      <span class="distrib-nome">Dental Odonthomaz</span>
+                      <span class="distrib-cidade">Presidente Prudente, SP</span>
+                    </span>
+                    <span class="distrib-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span>
+                  </button>
+                  <div class="distrib-det" id="det-odonthomaz-prudente"><div>
+                    <dl class="distrib-dados">
+                      <dt>Unidade</dt><dd>Filial S&atilde;o Paulo</dd>
+                      <dt>Endere&ccedil;o</dt><dd class="dd-endereco">R. Major Fel&iacute;cio Tarabay, 834 &ndash; Loja 01 &ndash; Centro<br>Presidente Prudente, SP &middot; CEP 19010-051</dd>
+                      <dt>Telefone</dt><dd class="dd-tel"><a href="tel:+551832173172">(18) 3217-3172</a></dd>
+                      <dt>Horário</dt><dd>Segunda a sexta, das 8h &agrave;s 12h e das 14h &agrave;s 18h</dd>
+                      <dt>Site</dt><dd><a href="https://www.dentalodonthomaz.com.br" target="_blank" rel="noopener">dentalodonthomaz.com.br</a></dd>
+                    </dl>
+                  </div></div>
+                </div>
+              </div>
             </div></div>
           </div>
         </div>
@@ -2825,19 +3111,91 @@ document.querySelectorAll('.reveal').forEach(function(element){revealObserver.ob
 </script>
 
 <script>
-/* Acordeao dos distribuidores. Fica fora do modulo do mapa de proposito:
-   o dropdown tem que funcionar mesmo se o fetch do mapa falhar. */
+/* Acordeao de dois niveis dos distribuidores:
+   Nivel 1: Cidades (ao clicar, abre o menu para selecionar o cliente da regiao)
+   Nivel 2: Clientes (ao clicar, abre os dados detalhados daquele distribuidor)
+   Totalmente sincronizado com o mapa 2D. */
 (function(){
-  var itens=[].slice.call(document.querySelectorAll(".distrib-item .distrib-head"));
-  itens.forEach(function(b){
-    b.addEventListener("click",function(){
-      var item=b.parentNode, abrir=!item.classList.contains("aberto");
-      itens.forEach(function(o){
-        o.parentNode.classList.remove("aberto");
-        o.setAttribute("aria-expanded","false");
+  // 1. Controle das Cidades
+  var cidades = [].slice.call(document.querySelectorAll(".distrib-cidade-item"));
+  cidades.forEach(function(cidadeEl){
+    var head = cidadeEl.querySelector(".distrib-cidade-head");
+    if(!head) return;
+    head.addEventListener("click", function(){
+      var abrir = !cidadeEl.classList.contains("aberto");
+      cidades.forEach(function(c){
+        if(c !== cidadeEl) {
+          c.classList.remove("aberto");
+          var h = c.querySelector(".distrib-cidade-head");
+          if(h) h.setAttribute("aria-expanded", "false");
+        }
       });
-      if(abrir){item.classList.add("aberto");b.setAttribute("aria-expanded","true");}
+      cidadeEl.classList.toggle("aberto", abrir);
+      head.setAttribute("aria-expanded", abrir ? "true" : "false");
+
+      var grupo = cidadeEl.dataset.cidadeGrupo;
+      if (window._selecionarMapa) {
+        window._selecionarMapa(abrir ? grupo : null);
+      }
     });
+  });
+
+  // 2. Controle dos Clientes dentro de cada Cidade
+  var clientesHeads = [].slice.call(document.querySelectorAll(".distrib-clientes-lista .distrib-head"));
+  clientesHeads.forEach(function(b){
+    b.addEventListener("click", function(e){
+      e.stopPropagation();
+      var item = b.closest(".distrib-item") || b.parentNode;
+      var abrir = !item.classList.contains("aberto");
+      
+      // Fecha outros clientes na mesma cidade
+      var container = item.closest(".distrib-clientes-lista") || item.parentNode;
+      var irmaos = [].slice.call(container.querySelectorAll(".distrib-item"));
+      irmaos.forEach(function(o){
+        if(o !== item){
+          o.classList.remove("aberto");
+          var btn = o.querySelector(".distrib-head");
+          if(btn) btn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      if(abrir){
+        item.classList.add("aberto");
+        b.setAttribute("aria-expanded", "true");
+      } else {
+        item.classList.remove("aberto");
+        b.setAttribute("aria-expanded", "false");
+      }
+    });
+  });
+
+  // 3. Sincronizacao Mapa -> Lista de Cidades:
+  // Se o usuario clica em um pino no mapa, abre a cidade correspondente automaticamente
+  var observer = new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      if(m.type === "attributes" && m.attributeName === "class"){
+        var target = m.target;
+        if(target.classList.contains("distrib-item") && target.classList.contains("is-selecionado")){
+          var cidadePai = target.closest(".distrib-cidade-item");
+          if(cidadePai && !cidadePai.classList.contains("aberto")){
+            cidades.forEach(function(c){
+              if(c !== cidadePai) {
+                c.classList.remove("aberto");
+                var h = c.querySelector(".distrib-cidade-head");
+                if(h) h.setAttribute("aria-expanded", "false");
+              }
+            });
+            cidadePai.classList.add("aberto");
+            var head = cidadePai.querySelector(".distrib-cidade-head");
+            if(head) head.setAttribute("aria-expanded", "true");
+          }
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll(".distrib-clientes-lista .distrib-item").forEach(function(el){
+    observer.observe(el, { attributes: true });
   });
 })();
 </script>
